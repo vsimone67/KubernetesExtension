@@ -1,0 +1,648 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{DFFC8419-690B-4E4C-820A-CCEC8BD010BA}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KubernetesExtension</RootNamespace>
+    <AssemblyName>KubernetesExtension</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <UseCodebase>true</UseCodebase>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
+    <StartAction>Program</StartAction>
+    <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
+    <StartArguments>/rootsuffix Exp</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Commands\AddKubernetesSupport.cs" />
+    <Compile Include="Commands\BuildAndDeployToCluster.cs" />
+    <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="Commands\DeleteDeployment.cs" />
+    <Compile Include="Commands\DeployToCluster.cs" />
+    <Compile Include="Commands\RemoveKubernetesSupport.cs" />
+    <Compile Include="Connections\HelmConnection.cs" />
+    <Compile Include="Connections\KubernetesConnection.cs" />
+    <Compile Include="Connections\ProcessBase.cs" />
+    <Compile Include="Deployments\DeployBase.cs" />
+    <Compile Include="Deployments\HelmDeploy.cs" />
+    <Compile Include="Deployments\IDeployment.cs" />
+    <Compile Include="Deployments\KubernetesDeploy.cs" />
+    <Compile Include="Models\Helm\HelmRelease.cs" />
+    <Compile Include="Models\Helm\HelmReleases.cs" />
+    <Compile Include="Models\Kubernetes\DeleteOptionsV1.cs" />
+    <Compile Include="Models\Kubernetes\DeletePropagationPolicy.cs" />
+    <Compile Include="Models\Kubernetes\generated\AffinityV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AggregationRuleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AggregationRuleV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AggregationRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AllowedFlexVolumeV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AllowedHostPathV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIGroupListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIGroupV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIResourceListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIResourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIServiceV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIVersionsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\APIVersionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AttachedVolumeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AWSElasticBlockStoreVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AzureDiskVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AzureFilePersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\AzureFileVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\BindingV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CapabilitiesV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CephFSPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CephFSVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CertificateSigningRequestConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CertificateSigningRequestListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CertificateSigningRequestSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CertificateSigningRequestStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CertificateSigningRequestV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CinderPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CinderVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClientIPConfigV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleBindingListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleBindingListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleBindingListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleBindingV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleBindingV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleBindingV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ClusterRoleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ComponentConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ComponentStatusListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ComponentStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapEnvSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapKeySelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapNodeConfigSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapProjectionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigMapVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ConfigView.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerImageV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerPortV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerStateRunningV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerStateTerminatedV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerStateV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerStateWaitingV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ContainerV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ControllerRevisionListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ControllerRevisionListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ControllerRevisionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ControllerRevisionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobListV2Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobSpecV2Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobStatusV2Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CronJobV2Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CrossVersionObjectReferenceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CrossVersionObjectReferenceV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CSIPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceColumnDefinitionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionNamesV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceDefinitionVersionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceSubresourceScaleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceSubresourceStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceSubresourcesV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\CustomResourceValidationV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonEndpointV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetConditionV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetListV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetSpecV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetStatusV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetUpdateStrategyV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetUpdateStrategyV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetUpdateStrategyV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DaemonSetV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentConditionV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentListV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentRollbackV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentSpecV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentStatusV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentStrategyV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentStrategyV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentStrategyV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DeploymentV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\DownwardAPIProjectionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DownwardAPIVolumeFileV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\DownwardAPIVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EmptyDirVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EndpointAddressV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EndpointPortV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EndpointsListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EndpointSubsetV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EndpointsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EnvFromSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EnvVarSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EnvVarV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventSeriesV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventSeriesV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EventV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\EvictionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ExecActionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ExternalDocumentationV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ExternalMetricSourceV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ExternalMetricStatusV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\FCVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\FlexPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\FlexVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\FlockerVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\FSGroupStrategyOptionsV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\GCEPersistentDiskVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\GitRepoVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\GlusterfsVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\GroupVersionForDiscoveryV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HandlerV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerConditionV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerListV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerSpecV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerStatusV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HorizontalPodAutoscalerV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HostAliasV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HostPathVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HostPortRangeV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HTTPGetActionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HTTPHeaderV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HTTPIngressPathV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\HTTPIngressRuleValueV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IDRangeV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\InfoVersion.cs" />
+    <Compile Include="Models\Kubernetes\generated\IngressBackendV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IngressRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IngressSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IngressStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IngressTLSV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\InitializerConfigurationListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\InitializerConfigurationV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\InitializersV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\InitializerV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\InitializerV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IPBlockV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\IPBlockV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ISCSIPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ISCSIVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobTemplateSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobTemplateSpecV2Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JobV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JSONSchemaPropsOrBoolV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JSONSchemaPropsOrStringArrayV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JSONSchemaPropsV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\JSONV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\KeyToPathV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LabelSelectorRequirementV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LabelSelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LifecycleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LimitRangeItemV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LimitRangeListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LimitRangeSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LimitRangeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ListMetaV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LoadBalancerIngressV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LoadBalancerStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LocalObjectReferenceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LocalSubjectAccessReviewV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LocalSubjectAccessReviewV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\LocalVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\MetricSpecV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\MetricStatusV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\MicroTimeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\MutatingWebhookConfigurationListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\MutatingWebhookConfigurationV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NamespaceListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NamespaceSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NamespaceStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NamespaceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyEgressRuleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyEgressRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyIngressRuleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyIngressRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyPeerV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyPeerV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyPortV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyPortV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicySpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicySpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NetworkPolicyV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NFSVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeAddressV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeAffinityV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeConfigSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeConfigStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeDaemonEndpointsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeSelectorRequirementV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeSelectorTermV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeSelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeSystemInfoV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NodeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NonResourceAttributesV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NonResourceAttributesV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NonResourceRuleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\NonResourceRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ObjectFieldSelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ObjectMetaV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ObjectMetricSourceV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ObjectMetricStatusV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ObjectReferenceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\OwnerReferenceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PatchV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeClaimConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeClaimListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeClaimSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeClaimStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeClaimV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeClaimVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PersistentVolumeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PhotonPersistentDiskVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodAffinityTermV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodAffinityV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodAntiAffinityV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodDisruptionBudgetListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodDisruptionBudgetSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodDisruptionBudgetStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodDisruptionBudgetV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodDNSConfigOptionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodDNSConfigV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodPresetListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodPresetSpecV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodPresetV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodReadinessGateV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodSecurityContextV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodSecurityPolicyListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodSecurityPolicySpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodSecurityPolicyV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodsMetricSourceV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodsMetricStatusV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodTemplateListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodTemplateSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodTemplateV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PodV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PolicyRuleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PolicyRuleV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PolicyRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PortworxVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PreconditionsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PreferredSchedulingTermV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PriorityClassListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PriorityClassListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PriorityClassV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\PriorityClassV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ProbeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ProjectedVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\QuobyteVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RawExtensionRuntime.cs" />
+    <Compile Include="Models\Kubernetes\generated\RBDPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RBDVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetConditionV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetListV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetSpecV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetStatusV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicaSetV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicationControllerConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicationControllerListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicationControllerSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicationControllerStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ReplicationControllerV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceAttributesV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceAttributesV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceFieldSelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceMetricSourceV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceMetricStatusV2Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceQuotaListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceQuotaSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceQuotaStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceQuotaV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceRequirementsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceRuleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ResourceRuleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleBindingListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleBindingListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleBindingListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleBindingV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleBindingV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleBindingV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleRefV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleRefV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleRefV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RoleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollbackConfigV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateDaemonSetV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateDaemonSetV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateDaemonSetV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateDeploymentV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateDeploymentV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateDeploymentV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateStatefulSetStrategyV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateStatefulSetStrategyV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RollingUpdateStatefulSetStrategyV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\RuleV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RuleWithOperationsV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\RunAsUserStrategyOptionsV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleIOPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleIOVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleSpecV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleStatusV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScaleV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScopedResourceSelectorRequirementV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ScopeSelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretEnvSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretKeySelectorV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretProjectionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretReferenceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecretVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SecurityContextV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectAccessReviewSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectAccessReviewSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectAccessReviewV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectAccessReviewV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectRulesReviewSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectRulesReviewSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectRulesReviewV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SelfSubjectRulesReviewV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SELinuxOptionsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SELinuxStrategyOptionsV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServerAddressByClientCIDRV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceAccountListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceAccountTokenProjectionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceAccountV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServicePortV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceReferenceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceReferenceV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ServiceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SessionAffinityConfigV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetConditionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetConditionV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetConditionV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetListV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetSpecV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetStatusV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetUpdateStrategyV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetUpdateStrategyV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetUpdateStrategyV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatefulSetV1Beta2.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatusCauseV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatusDetailsV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StorageClassListV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StorageClassListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StorageClassV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StorageClassV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StorageOSPersistentVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\StorageOSVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectAccessReviewSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectAccessReviewSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectAccessReviewStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectAccessReviewStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectAccessReviewV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectAccessReviewV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectRulesReviewStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectRulesReviewStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SubjectV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SupplementalGroupsStrategyOptionsV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\SysctlV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TaintV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TCPSocketActionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TokenReviewSpecV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TokenReviewSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TokenReviewStatusV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TokenReviewStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TokenReviewV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TokenReviewV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TolerationV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TopologySelectorLabelRequirementV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\TopologySelectorTermV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\UserInfoV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\UserInfoV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ValidatingWebhookConfigurationListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\ValidatingWebhookConfigurationV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentListV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentSourceV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentSourceV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentSpecV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentSpecV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentStatusV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentStatusV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeAttachmentV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeDeviceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeErrorV1Alpha1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeErrorV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeMountV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeNodeAffinityV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeProjectionV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VolumeV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\VsphereVirtualDiskVolumeSourceV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\WatchEventV1.cs" />
+    <Compile Include="Models\Kubernetes\generated\WebhookClientConfigV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\WebhookV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\generated\WeightedPodAffinityTermV1.cs" />
+    <Compile Include="Models\Kubernetes\IResourceEventV1.cs" />
+    <Compile Include="Models\Kubernetes\KubeActions.cs" />
+    <Compile Include="Models\Kubernetes\KubeApiAttribute.cs" />
+    <Compile Include="Models\Kubernetes\KubeApiException.cs" />
+    <Compile Include="Models\Kubernetes\KubeClientException.cs" />
+    <Compile Include="Models\Kubernetes\KubeListItemAttribute.cs" />
+    <Compile Include="Models\Kubernetes\KubeObjectAttribute.cs" />
+    <Compile Include="Models\Kubernetes\KubeObjectV1.cs" />
+    <Compile Include="Models\Kubernetes\KubeResourceListResultV1.cs" />
+    <Compile Include="Models\Kubernetes\KubeResourceListV1.cs" />
+    <Compile Include="Models\Kubernetes\KubeResourceResultV1.cs" />
+    <Compile Include="Models\Kubernetes\KubeResourceV1.cs" />
+    <Compile Include="Models\Kubernetes\KubeResultV1.cs" />
+    <Compile Include="Models\Kubernetes\MergeStrategyAttribute.cs" />
+    <Compile Include="Models\Kubernetes\ModelExtensions.cs" />
+    <Compile Include="Models\Kubernetes\ModelMetadata.cs" />
+    <Compile Include="Models\Kubernetes\PatchStrategies.cs" />
+    <Compile Include="Models\Kubernetes\PatchStrategyAttribute.cs" />
+    <Compile Include="Models\Kubernetes\QuantityResource.cs" />
+    <Compile Include="Models\Kubernetes\ResourceEventType.cs" />
+    <Compile Include="Models\Kubernetes\ResourceEventV1.cs" />
+    <Compile Include="Models\Kubernetes\RetainKeysStrategyAttribute.cs" />
+    <Compile Include="Models\Kubernetes\StatusV1.cs" />
+    <Compile Include="Models\Kubernetes\ThirdPartyResourceListV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\ThirdPartyResourceV1Beta1.cs" />
+    <Compile Include="Models\Kubernetes\TimeV1.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="KubernetesExtensionPackage.cs" />
+    <Compile Include="Utils\GetValueFromFile.cs" />
+    <Compile Include="Utils\Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.200" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.1.3132" />
+    <PackageReference Include="SimpleInjector">
+      <Version>4.6.0</Version>
+    </PackageReference>
+    <PackageReference Include="YamlDotNet.NetCore">
+      <Version>1.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <VSCTCompile Include="KubernetesExtensionPackage.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Commands\Resources\AddKubernetesSupport.png" />
+    <Content Include="Commands\Resources\BuildAndDeployToCluster.png" />
+    <Content Include="Commands\Resources\DeleteDeployment.png" />
+    <Content Include="Commands\Resources\DeployToCluster.png" />
+    <Content Include="Commands\Resources\RemoveKubernetesSupport.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Windows\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
