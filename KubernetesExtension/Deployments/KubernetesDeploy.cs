@@ -1,22 +1,21 @@
-﻿using EnvDTE;
-using Kubernetes;
+﻿using Kubernetes;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.VisualStudio.Shell;
 
 namespace KubernetesExtension
 {
     public class KubernetesDeploy : DeployBase, IDeployment
     {
         protected string _projectDir;
+
         public void BuildAndDeployToCluster(KubernetesExtensionPackage package)
         {
             _package = package;
             var appName = MakeDeploymentName(package.GetCurrentProject().Name);
-            var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);            
+            var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             BuildDockerandPublishDockerImage(appName, projectDir);
         }
 
@@ -27,9 +26,11 @@ namespace KubernetesExtension
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             Directory.CreateDirectory($"{projectDir}\\{kubeName}");
             File.WriteAllText($"{projectDir}\\{kubeName}\\deployment.yaml", GetKubeYamlText().Replace("NAMEGOESHERE", MakeDeploymentName(package.GetCurrentProject().Name)));
+            File.WriteAllText($"{projectDir}\\{kubeName}\\createconfigs.ps1", GetSettingsForScript().Replace("NAMEGOESHERE", MakeDeploymentName(package.GetCurrentProject().Name)));
             File.WriteAllText($"{projectDir}\\{kubeName}\\deploy.ps1", GetPowerShellDeployScript());
             package.GetCurrentProject().ProjectItems.AddFolder($"{projectDir}\\{kubeName}");
-        }        
+        }
+
         public async void DeployToCluster(KubernetesExtensionPackage package)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -43,7 +44,6 @@ namespace KubernetesExtension
             {
                 UpdateDeployment(_package);
             }
-
         }
 
         public bool HasDeploymentConfiguration(KubernetesExtensionPackage package)
@@ -60,7 +60,7 @@ namespace KubernetesExtension
             bool retval = false;
             KuberntesConnection kubeConnection = new KuberntesConnection();
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
-            var deployments  = kubeConnection.GetAllDeployments();
+            var deployments = kubeConnection.GetAllDeployments();
 
             retval = deployments.Items.Any(exp => exp.Metadata.Name.ToUpper() == appName.ToUpper());
             return retval;
@@ -77,14 +77,25 @@ namespace KubernetesExtension
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
         }
 
-        protected void DeployAllToCluster(KubernetesExtensionPackage package)
+        public void CheckDeploymentStatus(KubernetesExtensionPackage package)
         {            
+            _package = package;
+            
+            var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
+            var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
+            var yamlDir = $"{projectDir}\\{kubeName}";
+            var knamespace = GetNameSpaceFromYaml();         
+            var kubeCommand = $"rollout status deploy/{appName} --namespace {knamespace}";
+
+            Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
+        }
+        protected void DeployAllToCluster(KubernetesExtensionPackage package)
+        {
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             var yamlDir = $"{projectDir}\\{kubeName}";
             var kubeCommand = "apply -f deployment.yaml";
 
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
-
         }
 
         protected void UpdateDeployment(KubernetesExtensionPackage package)
@@ -102,16 +113,14 @@ namespace KubernetesExtension
         private string GetNameSpaceFromYaml()
         {
             var retval = string.Empty;
-            
+
             var projectDir = Path.GetDirectoryName(_package.GetCurrentProject().FullName);
             var filename = $"{projectDir}\\{kubeName}\\deployment.yaml";
 
             GetValueFromFile file = new GetValueFromFile();
-            retval = file.GetValue(filename,"namespace");
+            retval = file.GetValue(filename, "namespace");
 
-            
-
-            return retval ;
+            return retval;
         }
 
         public void RemoveDeploymentFiles(KubernetesExtensionPackage package)
@@ -130,6 +139,7 @@ namespace KubernetesExtension
         }
 
         #region Yaml/PS file contents
+
         private string GetKubeYamlText()
         {
             return @"apiVersion: v1
@@ -207,7 +217,15 @@ docker tag ""$($appName):latest"" vsimone67/""$($appName):latest""
 docker push vsimone67/""$($appName):latest""";
         }
 
-       
+        protected string GetSettingsForScript()
+        {
+            return @"kubectl create secret generic appsettings-secret-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.secrets.json
+
+kubectl create configmap appsettings-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.json";
+        }
+
+        
     }
-    #endregion
+
+    #endregion Yaml/PS file contents
 }

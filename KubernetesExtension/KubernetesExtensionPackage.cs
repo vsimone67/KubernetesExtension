@@ -76,6 +76,7 @@ namespace KubernetesExtension
             await KubernetesExtension.Commands.RemoveKubernetesSupport.InitializeAsync(this);
             await KubernetesExtension.Commands.DeployToCluster.InitializeAsync(this);
             await KubernetesExtension.Commands.DeleteDeployment.InitializeAsync(this);
+            await KubernetesExtension.Commands.CheckDeploymentStatus.InitializeAsync(this);
         }
 
         private void RegisterComponents()

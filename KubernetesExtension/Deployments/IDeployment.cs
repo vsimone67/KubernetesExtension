@@ -17,5 +17,7 @@ namespace KubernetesExtension
         void DeployToCluster(KubernetesExtensionPackage package);
 
         void DeleteDeployment(KubernetesExtensionPackage package);
+        void CheckDeploymentStatus(KubernetesExtensionPackage package);
+        
     }
 }

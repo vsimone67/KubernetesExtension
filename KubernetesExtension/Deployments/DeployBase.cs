@@ -41,7 +41,7 @@ namespace KubernetesExtension
 
             if (name.ToUpper().Contains("API"))
             {
-                newName += $"{prefix}api";
+                newName += $"{prefix}gateway";
             }
 
             return newName;
@@ -65,8 +65,9 @@ namespace KubernetesExtension
 
         protected string MakeDeploymentName(string name)
         {
-            string newName = GetDeploymentName(name);
-            return AddDeploymnetType(newName);
+            string newName = AddDeploymnetType(name);
+            return GetDeploymentName(newName);
+            
         }
 
         protected async void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)

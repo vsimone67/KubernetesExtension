@@ -39,6 +39,7 @@
       <Group guid="guidKubernetesExtensionPackageCmdSet" id="MyMenuGroup" priority="0x0600">
         <Parent guid="guidKubernetesExtensionPackageCmdSet" id="TopLevelMenu" />
       </Group>        
+  
     </Groups>
 
     <!--Buttons section. -->
@@ -81,6 +82,13 @@
           <ButtonText>Delete Deployment</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidKubernetesExtensionPackageCmdSet" id="cmdidCheckDeploymentStatus" priority="0x0103" type="Button">
+        <Parent guid="guidKubernetesExtensionPackageCmdSet" id="MyMenuGroup" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Check Deployment Status</ButtonText>
+        </Strings>
+      </Button>
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -96,6 +104,7 @@
       <Bitmap guid="guidImages3" href="Commands\Resources\RemoveKubernetesSupport.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
       <Bitmap guid="guidImages4" href="Commands\Resources\DeployToCluster.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
       <Bitmap guid="guidImages5" href="Commands\Resources\DeleteDeployment.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages6" href="Commands\Resources\CheckDeploymentStatus.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
 
     <Menus>
@@ -122,7 +131,8 @@
       <IDSymbol name="cmdidBuildAndDeployToCluster" value="0x1023" />
       <IDSymbol name="cmdidRemoveKubernetesSupport" value="0x1024" />
       <IDSymbol name="cmdidDeployToCluster" value="0x1025" />
-      <IDSymbol name="cmdidDeleteDeployment" value="0x1026" />      
+      <IDSymbol name="cmdidDeleteDeployment" value="0x1026" /> 
+      <IDSymbol name="cmdidCheckDeploymentStatus" value="0x1027" />  
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{778b680c-711e-4575-b7d5-b73145ad2b59}">
@@ -171,6 +181,15 @@
     </GuidSymbol> 
   
     <GuidSymbol value="{0ba603ac-2163-47e5-a7e2-8aecf7f9a1b2}" name="guidImages5">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>  
+   
+    <GuidSymbol value="{d605999b-579f-48d3-97b5-a1092a539637}" name="guidImages6">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />

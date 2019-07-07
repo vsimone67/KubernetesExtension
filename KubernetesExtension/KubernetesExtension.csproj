@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Commands\AddKubernetesSupport.cs" />
     <Compile Include="Commands\BuildAndDeployToCluster.cs" />
+    <Compile Include="Commands\CheckDeploymentStatus.cs" />
     <Compile Include="Commands\CommandBase.cs" />
     <Compile Include="Commands\DeleteDeployment.cs" />
     <Compile Include="Commands\DeployToCluster.cs" />
@@ -629,6 +630,7 @@
   <ItemGroup>
     <Content Include="Commands\Resources\AddKubernetesSupport.png" />
     <Content Include="Commands\Resources\BuildAndDeployToCluster.png" />
+    <Content Include="Commands\Resources\CheckDeploymentStatus.png" />
     <Content Include="Commands\Resources\DeleteDeployment.png" />
     <Content Include="Commands\Resources\DeployToCluster.png" />
     <Content Include="Commands\Resources\RemoveKubernetesSupport.png" />
