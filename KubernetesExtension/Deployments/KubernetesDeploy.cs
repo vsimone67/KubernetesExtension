@@ -107,6 +107,8 @@ namespace KubernetesExtension
             var yamlDir = $"{projectDir}\\{kubeName}";
             var knamespace = GetNameSpaceFromYaml();
             var kubeCommand = $"set image deployment {appName} {appName}-pod={dockerHubUserName}/{appName}:latest --namespace {knamespace}";
+            Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, true, Process_OutputDataReceived, Process_ErrorDataReceived);
+            kubeCommand = $"set image deployment {appName} {appName}-pod={dockerHubUserName}/{appName} --namespace {knamespace}";
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
         }
 
@@ -163,6 +165,7 @@ spec:
       containers:
         - name: NAMEGOESHERE-pod
           image: vsimone67/NAMEGOESHERE:latest
+          imagePullPolicy: ""Always""
           ports:
             - name: http
               containerPort: 80

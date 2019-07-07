@@ -41,7 +41,7 @@ namespace KubernetesExtension.Commands
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             OleMenuCommand item = (OleMenuCommand)sender;
-            item.Enabled = !_isProcessRunning && !_deployment.HasDeploymentConfiguration(_package);
+            item.Enabled = !_isProcessRunning && _deployment.HasDeploymentConfiguration(_package);
         }
 
         /// <summary>
