@@ -1,6 +1,7 @@
 ﻿using Helm.Release;
 using KubeClient.Models;
 using Kubernetes.Models;
+using KubernetesExtension;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Kubernetes.ViewModels
         private ObservableCollection<SecretV1> _secrets;
         private ObservableCollection<NodeInfo> _nodeInfo;
         private ObservableCollection<ServiceV1> _services;
-
+        
         public DeploymentV1 SelectedKubernetesDeployment { get; set; }
         public HelmRelease SelectedHelmDeployment { get; set; }
 
@@ -40,6 +41,7 @@ namespace Kubernetes.ViewModels
             _secrets = new ObservableCollection<SecretV1>();
             _nodeInfo = new ObservableCollection<NodeInfo>();
             _services = new ObservableCollection<ServiceV1>();
+            
 
             _kubernetesDeployments = new ObservableCollection<DeploymentV1>();
         }
@@ -206,8 +208,20 @@ namespace Kubernetes.ViewModels
         {
             HelmConnection helmConnection = new HelmConnection();
             helmConnection.DeleteHelmReleases(deployment);
+            
             _helmDeployments.Remove(SelectedHelmDeployment);
             OnPropertyChanged("HelmDeployments");
+            
+        }
+
+        public void DeleteKubernetesmDeployment(string deployment)
+        {
+            KuberntesConnection kubernetesConnection = new KuberntesConnection();
+            kubernetesConnection.RemoveDeployment(deployment);
+
+            _kubernetesDeployments.Remove(SelectedKubernetesDeployment);
+            OnPropertyChanged("HelmDeployments");
+
         }
 
         public NamespaceListV1 GetNameSpaces()

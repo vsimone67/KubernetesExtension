@@ -104,6 +104,13 @@ namespace Kubernetes
             RunKubernetsCommand(command);
         }
 
+        public void RemoveDeployment(string deployment)
+        {
+            string command = $"delete deployment/{deployment}";
+
+            RunKubernetsCommand(command);
+        }
+
         protected T GetKuberntesApi<T>(string command)
         {
             RunKubernetsCommand(command);

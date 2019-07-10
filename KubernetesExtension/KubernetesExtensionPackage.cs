@@ -39,6 +39,7 @@ namespace KubernetesExtension
     [Guid(KubernetesExtensionPackage.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string, PackageAutoLoadFlags.BackgroundLoad)] // Trigger CodeMaid to load on solution open so menu items can determine their state.
+    [ProvideToolWindow(typeof(KubernetesExtension.Windows.KubernetesCluster))]
     public sealed class KubernetesExtensionPackage : AsyncPackage
     {
         /// <summary>
@@ -77,6 +78,7 @@ namespace KubernetesExtension
             await KubernetesExtension.Commands.DeployToCluster.InitializeAsync(this);
             await KubernetesExtension.Commands.DeleteDeployment.InitializeAsync(this);
             await KubernetesExtension.Commands.CheckDeploymentStatus.InitializeAsync(this);
+            await KubernetesExtension.Windows.KubernetesClusterCommand.InitializeAsync(this);
         }
 
         private void RegisterComponents()
