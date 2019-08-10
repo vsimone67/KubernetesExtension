@@ -13,10 +13,11 @@ namespace KubernetesExtension
 
         public void BuildAndDeployToCluster(KubernetesExtensionPackage package)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             var appName = MakeDeploymentName(package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            BuildDockerandPublishDockerImage(appName, projectDir);
+            BuildDockerandPublishDockerImage(appName, projectDir, kubeName);
         }
 
         public void CreateDeploymentFiles(KubernetesExtensionPackage package)
@@ -48,6 +49,7 @@ namespace KubernetesExtension
 
         public bool HasDeploymentConfiguration(KubernetesExtensionPackage package)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
 
             var item = GetProjectItem(_package.GetCurrentProject().ProjectItems, kubeName);
@@ -56,6 +58,7 @@ namespace KubernetesExtension
 
         public bool HasDeploymnet(KubernetesExtensionPackage package)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             bool retval = false;
             KuberntesConnection kubeConnection = new KuberntesConnection();
@@ -68,6 +71,7 @@ namespace KubernetesExtension
 
         public void DeleteDeployment(KubernetesExtensionPackage package)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
 
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
@@ -78,9 +82,10 @@ namespace KubernetesExtension
         }
 
         public void CheckDeploymentStatus(KubernetesExtensionPackage package)
-        {            
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
-            
+
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             var yamlDir = $"{projectDir}\\{kubeName}";
@@ -91,6 +96,8 @@ namespace KubernetesExtension
         }
         protected void DeployAllToCluster(KubernetesExtensionPackage package)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            _package = package;
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             var yamlDir = $"{projectDir}\\{kubeName}";
             var kubeCommand = "apply -f deployment.yaml";
@@ -100,8 +107,9 @@ namespace KubernetesExtension
 
         protected void UpdateDeployment(KubernetesExtensionPackage package)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
-            //kubectl set image deployment testdeploy testdeploy-pod=vsimone67/testdeploy --namespace playground
+            
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             var yamlDir = $"{projectDir}\\{kubeName}";
@@ -111,6 +119,27 @@ namespace KubernetesExtension
             kubeCommand = $"set image deployment {appName} {appName}-pod={dockerHubUserName}/{appName} --namespace {knamespace}";
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
         }
+
+
+        public void RemoveDeploymentFiles(KubernetesExtensionPackage package)
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            _package = package;
+            var project = package.GetCurrentProject();
+            var projectDir = Path.GetDirectoryName(project.FullName);
+            var item = GetProjectItem(project.ProjectItems, kubeName);
+            item.Delete();
+        }
+
+        protected override void Process_DockerBuildComplete(object sender, EventArgs e)
+        {
+            System.Threading.Tasks.Task.Delay(5000).Wait();
+            DeployToCluster(_package);
+          
+        }
+
+        #region Yaml/PS file contents
+
 
         private string GetNameSpaceFromYaml()
         {
@@ -124,24 +153,6 @@ namespace KubernetesExtension
 
             return retval;
         }
-
-        public void RemoveDeploymentFiles(KubernetesExtensionPackage package)
-        {
-            var project = package.GetCurrentProject();
-            var projectDir = Path.GetDirectoryName(project.FullName);
-            var item = GetProjectItem(project.ProjectItems, kubeName);
-            item.Delete();
-        }
-
-        protected override void Process_DockerBuildComplete(object sender, EventArgs e)
-        {
-            System.Threading.Tasks.Task.Delay(5000).Wait();
-            DeployToCluster(_package);
-            int x = 0;
-        }
-
-        #region Yaml/PS file contents
-
         private string GetKubeYamlText()
         {
             return @"apiVersion: v1
@@ -200,32 +211,7 @@ spec:
   type: LoadBalancer";
         }
 
-        protected string GetPowerShellDeployScript()
-        {
-            return @"param(
-		[Parameter(Position=0, Mandatory=$true)]
-		[ValidateNotNullOrEmpty()]
-		[System.String]
-		$appName,
-
-		[Parameter(Position=1, Mandatory=$true)]
-		[ValidateNotNullOrEmpty()]
-		[System.String]
-		$projectDir
-	)
-
-Set-Location $projectDir.Substring(0,$projectDir.LastIndexOf(""\""))
-docker build -t $appName -f ""$($projectDir)\dockerfile"".
-docker tag ""$($appName):latest"" vsimone67/""$($appName):latest""
-docker push vsimone67/""$($appName):latest""";
-        }
-
-        protected string GetSettingsForScript()
-        {
-            return @"kubectl create secret generic appsettings-secret-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.secrets.json
-
-kubectl create configmap appsettings-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.json";
-        }
+     
 
         
     }

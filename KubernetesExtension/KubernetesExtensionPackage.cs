@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using EnvDTE;
 using EnvDTE80;
 using KubernetesExtension.Commands;
+using KubernetesExtension.DeployMents;
 using Microsoft;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;

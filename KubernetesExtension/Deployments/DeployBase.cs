@@ -88,15 +88,42 @@ namespace KubernetesExtension
             }
         }        
 
-        protected void BuildDockerandPublishDockerImage(string appName, string projectDir)
+        protected void BuildDockerandPublishDockerImage(string appName, string projectDir, string deployDir)
         {           
             var psCommand = $"./deploy.ps1 -appName {appName} -projectDir {projectDir}";
-            var psDir = $"{projectDir}\\{kubeName}";
+            var psDir = $"{projectDir}\\{deployDir}";
             Utils.RunProcess("powershell.exe", psCommand, psDir, false, Process_OutputDataReceived, Process_ErrorDataReceived, Process_DockerBuildComplete);
         }
 
         protected virtual void Process_DockerBuildComplete(object sender, EventArgs e)
         {
+        }
+
+        protected string GetPowerShellDeployScript()
+        {
+            return @"param(
+		[Parameter(Position=0, Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		[System.String]
+		$appName,
+
+		[Parameter(Position=1, Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		[System.String]
+		$projectDir
+	)
+
+Set-Location $projectDir.Substring(0,$projectDir.LastIndexOf(""\""))
+docker build -t $appName -f ""$($projectDir)\dockerfile"".
+docker tag ""$($appName):latest"" vsimone67/""$($appName):latest""
+docker push vsimone67/""$($appName):latest""";
+        }
+
+        protected string GetSettingsForScript()
+        {
+            return @"kubectl create secret generic appsettings-secret-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.secrets.json
+
+kubectl create configmap appsettings-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.json";
         }
 
 
