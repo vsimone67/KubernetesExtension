@@ -74,7 +74,7 @@ namespace KubernetesExtension.Commands
         {
             _isProcessRunning = true;            
             _deployment.CreateDeploymentFiles(_package);
-            _package.ShowWarningMessageBox("Don't forget to open all the generated files and add the namespace information.");
+            //_package.ShowWarningMessageBox("Don't forget to open all the generated files and add the namespace information.");
             _isProcessRunning = false;
         }
     }

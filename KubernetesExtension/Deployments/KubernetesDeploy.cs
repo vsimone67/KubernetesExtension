@@ -17,7 +17,7 @@ namespace KubernetesExtension
             _package = package;
             var appName = MakeDeploymentName(package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            BuildDockerandPublishDockerImage(appName, projectDir, kubeName);
+            BuildDockerandPublishDockerImage(appName, projectDir, _package.GetKubeOptions().KubeDir);
         }
 
         public void CreateDeploymentFiles(KubernetesExtensionPackage package)
@@ -25,11 +25,21 @@ namespace KubernetesExtension
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            Directory.CreateDirectory($"{projectDir}\\{kubeName}");
-            File.WriteAllText($"{projectDir}\\{kubeName}\\deployment.yaml", GetKubeYamlText().Replace("NAMEGOESHERE", MakeDeploymentName(package.GetCurrentProject().Name)));
-            File.WriteAllText($"{projectDir}\\{kubeName}\\createconfigs.ps1", GetSettingsForScript().Replace("NAMEGOESHERE", MakeDeploymentName(package.GetCurrentProject().Name)));
-            File.WriteAllText($"{projectDir}\\{kubeName}\\deploy.ps1", GetPowerShellDeployScript());
-            package.GetCurrentProject().ProjectItems.AddFolder($"{projectDir}\\{kubeName}");
+            Directory.CreateDirectory($"{projectDir}\\{_package.GetKubeOptions().KubeDir}");
+
+            string deployYaml = GetKubeYamlText(_package.GetKubeOptions().AddConfig);
+            string configYaml = GetSettingsForScript();
+            deployYaml = deployYaml.Replace("NAMEGOESHERE", MakeDeploymentName(package.GetCurrentProject().Name));
+            deployYaml = deployYaml.Replace("NAMESPACEGOESHERE", _package.GetKubeOptions().KubernetesNamespace);
+
+            configYaml = configYaml.Replace("NAMEGOESHERE", MakeDeploymentName(package.GetCurrentProject().Name));
+            configYaml = configYaml.Replace("NAMESPACEGOESHERE", _package.GetKubeOptions().KubernetesNamespace);
+
+            File.WriteAllText($"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\deployment.yaml", deployYaml);
+            File.WriteAllText($"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\createconfigs.ps1", configYaml);
+            File.WriteAllText($"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\deploy.ps1", GetPowerShellDeployScript());
+            File.WriteAllText($"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\createnamespace.ps1", GetNamespaceScript());
+            package.GetCurrentProject().ProjectItems.AddFolder($"{projectDir}\\{_package.GetKubeOptions().KubeDir}");
         }
 
         public async void DeployToCluster(KubernetesExtensionPackage package)
@@ -52,7 +62,7 @@ namespace KubernetesExtension
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
 
-            var item = GetProjectItem(_package.GetCurrentProject().ProjectItems, kubeName);
+            var item = GetProjectItem(_package.GetCurrentProject().ProjectItems, _package.GetKubeOptions().KubeDir);
             return (item != null && VSConstants.GUID_ItemType_PhysicalFolder == new Guid(item.Kind));
         }
 
@@ -75,7 +85,7 @@ namespace KubernetesExtension
             _package = package;
 
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            var yamlDir = $"{projectDir}\\{kubeName}";
+            var yamlDir = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}";
             var kubeCommand = "delete -f deployment.yaml";
 
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
@@ -88,7 +98,7 @@ namespace KubernetesExtension
 
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            var yamlDir = $"{projectDir}\\{kubeName}";
+            var yamlDir = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}";
             var knamespace = GetNameSpaceFromYaml();         
             var kubeCommand = $"rollout status deploy/{appName} --namespace {knamespace}";
 
@@ -99,7 +109,7 @@ namespace KubernetesExtension
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            var yamlDir = $"{projectDir}\\{kubeName}";
+            var yamlDir = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}";
             var kubeCommand = "apply -f deployment.yaml";
 
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
@@ -112,11 +122,11 @@ namespace KubernetesExtension
             
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            var yamlDir = $"{projectDir}\\{kubeName}";
+            var yamlDir = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}";
             var knamespace = GetNameSpaceFromYaml();
-            var kubeCommand = $"set image deployment {appName} {appName}-pod={dockerHubUserName}/{appName}:latest --namespace {knamespace}";
+            var kubeCommand = $"set image deployment {appName} {appName}-pod={_package.GetKubeOptions().DockerHubAccount}/{appName}:latest --namespace {knamespace}";
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, true, Process_OutputDataReceived, Process_ErrorDataReceived);
-            kubeCommand = $"set image deployment {appName} {appName}-pod={dockerHubUserName}/{appName} --namespace {knamespace}";
+            kubeCommand = $"set image deployment {appName} {appName}-pod={_package.GetKubeOptions().DockerHubAccount}/{appName} --namespace {knamespace}";
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
         }
 
@@ -126,8 +136,8 @@ namespace KubernetesExtension
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             var project = package.GetCurrentProject();
-            var projectDir = Path.GetDirectoryName(project.FullName);
-            var item = GetProjectItem(project.ProjectItems, kubeName);
+            var projectDir = Path.GetDirectoryName(project.FullName);            
+            var item = GetProjectItem(project.ProjectItems, _package.GetKubeOptions().KubeDir);
             item.Delete();
         }
 
@@ -146,16 +156,21 @@ namespace KubernetesExtension
             var retval = string.Empty;
 
             var projectDir = Path.GetDirectoryName(_package.GetCurrentProject().FullName);
-            var filename = $"{projectDir}\\{kubeName}\\deployment.yaml";
+            var filename = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\deployment.yaml";
 
             GetValueFromFile file = new GetValueFromFile();
             retval = file.GetValue(filename, "namespace");
 
             return retval;
         }
-        private string GetKubeYamlText()
+
+        private string GetNamespaceScript()
         {
-            return @"apiVersion: v1
+            return $"kubectl create namespace { _package.GetKubeOptions().KubernetesNamespace}";
+        }
+        private string GetKubeYamlText(bool addConfig)
+        {
+            string header = @"apiVersion: v1
 kind: Namespace
 metadata:
   name: NAMESPACEGOESHERE
@@ -180,7 +195,8 @@ spec:
           ports:
             - name: http
               containerPort: 80
-          env:
+";
+            string configMaps = @"          env:
             - name: ""appdirectory""
               value: ""/app/settings/""
           volumeMounts:
@@ -193,7 +209,9 @@ spec:
                   - configMap:
                       name: appsettings-NAMEGOESHERE
                   - secret:
-                      name: appsettings-secret-NAMEGOESHERE
+                      name: appsettings-secret-NAMEGOESHERE";
+
+            string service = @"
 ---
 apiVersion: v1
 kind: Service
@@ -209,10 +227,12 @@ spec:
   selector:
     app: NAMEGOESHERE
   type: LoadBalancer";
+
+            return header + ((addConfig) ? configMaps : "" )+ service;
         }
 
      
-
+        
         
     }
 

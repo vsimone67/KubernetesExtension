@@ -15,7 +15,7 @@ namespace KubernetesExtension.DeployMents
             _package = package;
             var appName = MakeDeploymentName(package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            BuildDockerandPublishDockerImage(appName, projectDir, helmChartName);
+            BuildDockerandPublishDockerImage(appName, projectDir, _package.GetKubeOptions().KubeDir);
         }
 
         public void CheckDeploymentStatus(KubernetesExtensionPackage package)
@@ -33,7 +33,7 @@ namespace KubernetesExtension.DeployMents
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
-            Utils.RunProcess("helm.exe", $"create {helmChartName}", projectDir, false, Process_OutputDataReceived, Process_ErrorDataReceived, Process_ProcessFinished);
+            Utils.RunProcess("helm.exe", $"create {_package.GetKubeOptions().KubeDir}", projectDir, false, Process_OutputDataReceived, Process_ErrorDataReceived, Process_ProcessFinished);
         }      
 
         public void DeleteDeployment(KubernetesExtensionPackage package)
@@ -63,7 +63,7 @@ namespace KubernetesExtension.DeployMents
                 commandAction = $"upgrade {appName} --recreate-pods";
             }
 
-            string helmCommand = $"{commandAction} .\\{helmChartName}\\";
+            string helmCommand = $"{commandAction} .\\{_package.GetKubeOptions().KubeDir}\\";
             Utils.RunProcess("helm.exe", helmCommand, projectDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);            
         }
 
@@ -72,7 +72,7 @@ namespace KubernetesExtension.DeployMents
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
 
-            var item = GetProjectItem(_package.GetCurrentProject().ProjectItems, helmChartName);
+            var item = GetProjectItem(_package.GetCurrentProject().ProjectItems, _package.GetKubeOptions().KubeDir);
             return (item != null && VSConstants.GUID_ItemType_PhysicalFolder == new Guid(item.Kind));
         }
 
@@ -91,7 +91,7 @@ namespace KubernetesExtension.DeployMents
             _package = package;
             var project = package.GetCurrentProject();
             var projectDir = Path.GetDirectoryName(project.FullName);
-            var item = GetProjectItem(project.ProjectItems, helmChartName);
+            var item = GetProjectItem(project.ProjectItems, _package.GetKubeOptions().KubeDir);
             item.Delete();
         }
 
@@ -108,12 +108,12 @@ namespace KubernetesExtension.DeployMents
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             var projectDir = Path.GetDirectoryName(_package.GetCurrentProject().FullName);
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
-            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{helmChartName}\\values.yaml"), "nginx", $"{dockerHubUserName}/{appName}");
-            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{helmChartName}\\values.yaml"), "stable", "latest");
-            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{helmChartName}\\values.yaml"), "IfNotPresent", "Always");
-            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{helmChartName}\\values.yaml"), "ClusterIP", "LoadBalancer");
-            File.WriteAllText($"{projectDir}\\{helmChartName}\\createconfigs.ps1", GetSettingsForScript().Replace("NAMEGOESHERE", MakeDeploymentName(_package.GetCurrentProject().Name)));
-            File.WriteAllText($"{projectDir}\\{helmChartName}\\deploy.ps1", GetPowerShellDeployScript());
+            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{_package.GetKubeOptions().KubeDir}\\values.yaml"), "nginx", $"{_package.GetKubeOptions().DockerHubAccount}/{appName}");
+            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{_package.GetKubeOptions().KubeDir}\\values.yaml"), "stable", "latest");
+            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{_package.GetKubeOptions().KubeDir}\\values.yaml"), "IfNotPresent", "Always");
+            ReplaceInFile(System.IO.Path.Combine(projectDir, $"{_package.GetKubeOptions().KubeDir}\\values.yaml"), "ClusterIP", "LoadBalancer");
+            File.WriteAllText($"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\createconfigs.ps1", GetSettingsForScript().Replace("NAMEGOESHERE", MakeDeploymentName(_package.GetCurrentProject().Name)));
+            File.WriteAllText($"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\deploy.ps1", GetPowerShellDeployScript());
         }
 
         private void ReplaceInFile(string fileName, string current, string replace)

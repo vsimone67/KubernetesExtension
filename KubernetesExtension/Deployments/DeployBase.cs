@@ -7,9 +7,6 @@ namespace KubernetesExtension
 {
     public class DeployBase
     {
-        protected string dockerHubUserName = "vsimone67";
-        protected string helmChartName = "charts";        
-        protected string kubeName = "k8";
         protected KubernetesExtensionPackage _package;
         public static ProjectItem GetProjectItem(ProjectItems items, string name)
         {

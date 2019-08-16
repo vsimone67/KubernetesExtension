@@ -611,6 +611,9 @@
       <DependentUpon>KubernetesClusterControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\Models\NodeInfo.cs" />
+    <Compile Include="Windows\KubeOptions.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Windows\ViewModels\KubernetesViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

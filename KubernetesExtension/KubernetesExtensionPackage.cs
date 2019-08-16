@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using EnvDTE;
-using EnvDTE80;
+﻿using EnvDTE;
 using KubernetesExtension.Commands;
 using KubernetesExtension.DeployMents;
+using KubernetesExtension.Windows;
 using Microsoft;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using SimpleInjector;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
 using Task = System.Threading.Tasks.Task;
 
 namespace KubernetesExtension
@@ -41,12 +39,14 @@ namespace KubernetesExtension
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string, PackageAutoLoadFlags.BackgroundLoad)] // Trigger CodeMaid to load on solution open so menu items can determine their state.
     [ProvideToolWindow(typeof(KubernetesExtension.Windows.KubernetesCluster))]
+    [ProvideOptionPage(typeof(KubeOptions), "Kubernetes", "Kubernetes Settings", 0, 0, true)]
     public sealed class KubernetesExtensionPackage : AsyncPackage
     {
         /// <summary>
         /// KubernetesExtensionPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "217f3169-2ead-43ea-afc5-ba2e93b6a8a5";
+
         private static readonly Guid kubernetesPaneGuid = new Guid("2BE8BB60-E918-4C59-8717-B078A6927D34");
         private Container _iocContainer;
 
@@ -55,7 +55,7 @@ namespace KubernetesExtension
             ThreadHelper.ThrowIfNotOnUIThread();
             return (IVsStatusbar)GetService(typeof(SVsStatusbar));
         }
-        
+
         #region Package Members
 
         /// <summary>
@@ -84,13 +84,15 @@ namespace KubernetesExtension
 
         private void RegisterComponents()
         {
-            _iocContainer.Register<IDeployment, KubernetesDeploy>();
+            if (GetKubeOptions().DeploymnetType == "Kubernetes")
+                _iocContainer.Register<IDeployment, KubernetesDeploy>();
+            else
+                _iocContainer.Register<IDeployment, HelmDeploy>();
         }
 
-        public TService GetService<TService>() 
+        public TService GetService<TService>()
         {
-            return (TService)_iocContainer.GetInstance(typeof(TService)) ;
-            
+            return (TService)_iocContainer.GetInstance(typeof(TService));
         }
 
         #endregion Package Members
@@ -143,9 +145,9 @@ namespace KubernetesExtension
                 if (p.Name == projectName)
                     return true;
             return false;
-        }       
+        }
 
-        public  void ShowWarningMessageBox(string message, string title = "Kubernetes for Visual Studio")
+        public void ShowWarningMessageBox(string message, string title = "Kubernetes for Visual Studio")
         {
             var service = this as IServiceProvider;
 
@@ -234,6 +236,11 @@ namespace KubernetesExtension
             {
                 // Item exists, ignore exception
             }
+        }
+
+        public KubeOptions GetKubeOptions()
+        {
+            return (KubeOptions)GetDialogPage(typeof(KubeOptions));
         }
     }
 }

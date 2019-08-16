@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KubernetesExtension.Windows;
+using System;
 
 namespace KubernetesExtension.Commands
 {
@@ -11,7 +12,9 @@ namespace KubernetesExtension.Commands
         protected IDeployment _deployment;
         public CommandBase()
         {
-            _isProcessRunning = false;            
+            _isProcessRunning = false;          
+
+            
         }
 
         protected string NormalizeAppName(string name)
