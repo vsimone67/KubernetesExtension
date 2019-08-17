@@ -1,9 +1,12 @@
 ﻿using EnvDTE;
+using KubeClient.Models;
+using Kubernetes;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace KubernetesExtension.DeployMents
 {
@@ -146,6 +149,30 @@ namespace KubernetesExtension.DeployMents
                 retval = false;
 
             return retval;
+        }
+
+        public void ScaleDeployment(KubernetesExtensionPackage package, int numberOfReplicas)
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            _package = package;
+
+            string kNameSpace = GetNameSpaceFromYaml();
+            string deploymentName = MakeDeploymentName(package.GetCurrentProject().Name);
+            KuberntesConnection kubernetesConnection = new KuberntesConnection();
+            kubernetesConnection.ScaleDeployment(deploymentName, numberOfReplicas, kNameSpace);
+        }
+
+        public DeploymentV1 GetDeploymentInfo(KubernetesExtensionPackage package)
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            _package = package;
+
+            KuberntesConnection kubeConnection = new KuberntesConnection();
+            var deployments = kubeConnection.GetAllDeployments();
+            var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
+            return deployments.Items.Where(exp => exp.Metadata.Name.ToUpper() == appName.ToUpper()).FirstOrDefault();
+
+
         }
 
         #endregion

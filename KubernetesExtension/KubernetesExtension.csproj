@@ -52,6 +52,7 @@
     <Compile Include="Commands\DeleteDeployment.cs" />
     <Compile Include="Commands\DeployToCluster.cs" />
     <Compile Include="Commands\RemoveKubernetesSupport.cs" />
+    <Compile Include="Commands\ScaleDeployment.cs" />
     <Compile Include="Connections\HelmConnection.cs" />
     <Compile Include="Connections\KubernetesConnection.cs" />
     <Compile Include="Connections\ProcessBase.cs" />
@@ -656,6 +657,7 @@
     <Content Include="Commands\Resources\DeleteDeployment.png" />
     <Content Include="Commands\Resources\DeployToCluster.png" />
     <Content Include="Commands\Resources\RemoveKubernetesSupport.png" />
+    <Content Include="Commands\Resources\ScaleDeployment.png" />
     <Content Include="Windows\Resources\KubernetesClusterCommand.png" />
   </ItemGroup>
   <ItemGroup>

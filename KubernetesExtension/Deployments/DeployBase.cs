@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace KubernetesExtension
 {
@@ -92,6 +93,18 @@ namespace KubernetesExtension
             Utils.RunProcess("powershell.exe", psCommand, psDir, false, Process_OutputDataReceived, Process_ErrorDataReceived, Process_DockerBuildComplete);
         }
 
+        protected string GetNameSpaceFromYaml()
+        {
+            var retval = string.Empty;
+
+            var projectDir = Path.GetDirectoryName(_package.GetCurrentProject().FullName);
+            var filename = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\deployment.yaml";
+
+            GetValueFromFile file = new GetValueFromFile();
+            retval = file.GetValue(filename, "namespace");
+
+            return retval;
+        }
         protected virtual void Process_DockerBuildComplete(object sender, EventArgs e)
         {
         }

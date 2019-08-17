@@ -1,4 +1,5 @@
 ﻿using EnvDTE;
+using KubeClient.Models;
 using System.Diagnostics;
 
 namespace KubernetesExtension
@@ -18,6 +19,10 @@ namespace KubernetesExtension
 
         void DeleteDeployment(KubernetesExtensionPackage package);
         void CheckDeploymentStatus(KubernetesExtensionPackage package);
-        
+
+        void ScaleDeployment(KubernetesExtensionPackage package, int numberOfReplicas);
+
+        DeploymentV1 GetDeploymentInfo(KubernetesExtensionPackage package);
+
     }
 }

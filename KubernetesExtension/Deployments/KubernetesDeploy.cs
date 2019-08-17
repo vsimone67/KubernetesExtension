@@ -1,4 +1,5 @@
-﻿using Kubernetes;
+﻿using KubeClient.Models;
+using Kubernetes;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using System;
@@ -104,6 +105,30 @@ namespace KubernetesExtension
 
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
         }
+
+        public void ScaleDeployment(KubernetesExtensionPackage package, int numberOfReplicas)
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            _package = package;
+
+            string kNameSpace = GetNameSpaceFromYaml();
+            string deploymentName = MakeDeploymentName(package.GetCurrentProject().Name);
+            KuberntesConnection kubernetesConnection = new KuberntesConnection();
+            kubernetesConnection.ScaleDeployment(deploymentName, numberOfReplicas, kNameSpace);
+        }
+
+        public DeploymentV1 GetDeploymentInfo(KubernetesExtensionPackage package)
+        {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            _package = package;
+
+            KuberntesConnection kubeConnection = new KuberntesConnection();
+            var deployments = kubeConnection.GetAllDeployments();
+            var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
+            return deployments.Items.Where(exp => exp.Metadata.Name.ToUpper() == appName.ToUpper()).FirstOrDefault();
+
+
+        }
         protected void DeployAllToCluster(KubernetesExtensionPackage package)
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
@@ -149,20 +174,7 @@ namespace KubernetesExtension
         }
 
         #region Yaml/PS file contents
-
-
-        private string GetNameSpaceFromYaml()
-        {
-            var retval = string.Empty;
-
-            var projectDir = Path.GetDirectoryName(_package.GetCurrentProject().FullName);
-            var filename = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}\\deployment.yaml";
-
-            GetValueFromFile file = new GetValueFromFile();
-            retval = file.GetValue(filename, "namespace");
-
-            return retval;
-        }
+       
 
         private string GetNamespaceScript()
         {
@@ -231,9 +243,7 @@ spec:
             return header + ((addConfig) ? configMaps : "" )+ service;
         }
 
-     
-        
-        
+      
     }
 
     #endregion Yaml/PS file contents

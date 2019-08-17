@@ -40,6 +40,15 @@ namespace Kubernetes
             
         }
 
+        public DeploymentV1 GetDeploymentInfo(string deployment, string @nameSpace)
+        {
+            var deplopymentList = GetDeployments(@nameSpace);
+
+            var deplopment = deplopymentList.Where(exp => exp.Metadata.Name == deployment).FirstOrDefault();
+
+            return deplopment;
+        }
+
         public ConfigMapListV1 GetConfigMaps(string @namespace)
         {
             return GetKuberntesApi<ConfigMapListV1>($"get --raw /api/v1/namespaces/{@namespace}/configmaps");
@@ -85,9 +94,9 @@ namespace Kubernetes
             return GetKuberntesApi<PodListV1>($"get pods --field-selector=spec.nodeName={nodeName} --namespace {@namespace} -o json");
         }
 
-        public void ScaleDeployment(string deploymentname, int numberOfReplicas)
+        public void ScaleDeployment(string deploymentname, int numberOfReplicas, string kNameSpace)
         {
-            GetKuberntesApi($"scale --replicas {numberOfReplicas} deployment/{deploymentname}");
+            GetKuberntesApi($"scale --replicas {numberOfReplicas} deployment/{deploymentname} --namespace {kNameSpace}");
         }
 
         public void DeployToCluster(string yamlFile, string path)
