@@ -100,7 +100,7 @@ namespace KubernetesExtension
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             var yamlDir = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}";
-            var knamespace = GetNameSpaceFromYaml();         
+            var knamespace = GetNameSpaceFromYaml();
             var kubeCommand = $"rollout status deploy/{appName} --namespace {knamespace}";
 
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
@@ -126,9 +126,8 @@ namespace KubernetesExtension
             var deployments = kubeConnection.GetAllDeployments();
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             return deployments.Items.Where(exp => exp.Metadata.Name.ToUpper() == appName.ToUpper()).FirstOrDefault();
-
-
         }
+
         protected void DeployAllToCluster(KubernetesExtensionPackage package)
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
@@ -144,7 +143,7 @@ namespace KubernetesExtension
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
-            
+
             var appName = MakeDeploymentName(_package.GetCurrentProject().Name);
             var projectDir = Path.GetDirectoryName(package.GetCurrentProject().FullName);
             var yamlDir = $"{projectDir}\\{_package.GetKubeOptions().KubeDir}";
@@ -155,13 +154,12 @@ namespace KubernetesExtension
             Utils.RunProcess("kubectl.exe", kubeCommand, yamlDir, false, Process_OutputDataReceived, Process_ErrorDataReceived);
         }
 
-
         public void RemoveDeploymentFiles(KubernetesExtensionPackage package)
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             _package = package;
             var project = package.GetCurrentProject();
-            var projectDir = Path.GetDirectoryName(project.FullName);            
+            var projectDir = Path.GetDirectoryName(project.FullName);
             var item = GetProjectItem(project.ProjectItems, _package.GetKubeOptions().KubeDir);
             item.Delete();
         }
@@ -170,16 +168,15 @@ namespace KubernetesExtension
         {
             System.Threading.Tasks.Task.Delay(5000).Wait();
             DeployToCluster(_package);
-          
         }
 
         #region Yaml/PS file contents
-       
 
         private string GetNamespaceScript()
         {
             return $"kubectl create namespace { _package.GetKubeOptions().KubernetesNamespace}";
         }
+
         private string GetKubeYamlText(bool addConfig)
         {
             string header = @"apiVersion: v1
@@ -187,12 +184,15 @@ kind: Namespace
 metadata:
   name: NAMESPACEGOESHERE
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: NAMEGOESHERE
   namespace: NAMESPACEGOESHERE
 spec:
+  selector:
+    matchLabels:
+      app: NAMEGOESHERE
   replicas: 1
   minReadySeconds: 10
   template:
@@ -240,10 +240,8 @@ spec:
     app: NAMEGOESHERE
   type: LoadBalancer";
 
-            return header + ((addConfig) ? configMaps : "" )+ service;
+            return header + ((addConfig) ? configMaps : "") + service;
         }
-
-      
     }
 
     #endregion Yaml/PS file contents

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="KubernetesExtension.e61aaeba-34c3-4125-9059-9099f399179c" Version="1.0" Language="en-US" Publisher="Vincent Simone" />
+        <Identity Id="KubernetesExtension.e61aaeba-34c3-4125-9059-9099f399179c" Version="1.1" Language="en-US" Publisher="Vincent Simone" />
         <DisplayName>Kubernetes Extension</DisplayName>
         <Description xml:space="preserve">Kubernetes Deployment Manager</Description>
     </Metadata>
