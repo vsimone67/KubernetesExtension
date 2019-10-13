@@ -9,6 +9,7 @@ namespace KubernetesExtension
     public class DeployBase
     {
         protected KubernetesExtensionPackage _package;
+
         public static ProjectItem GetProjectItem(ProjectItems items, string name)
         {
             foreach (ProjectItem p in items)
@@ -24,8 +25,7 @@ namespace KubernetesExtension
 
         protected string AddDeploymnetType(string name, string prefix = "")
         {
-            
-            string newName = name;                       
+            string newName = name;
 
             if (name.ToUpper().Contains("SERVICE"))
             {
@@ -65,7 +65,6 @@ namespace KubernetesExtension
         {
             string newName = AddDeploymnetType(name);
             return GetDeploymentName(newName);
-            
         }
 
         protected async void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -84,10 +83,10 @@ namespace KubernetesExtension
             {
                 _package.WriteToOutputWindow(e.Data);
             }
-        }        
+        }
 
         protected void BuildDockerandPublishDockerImage(string appName, string projectDir, string deployDir)
-        {           
+        {
             var psCommand = $"./deploy.ps1 -appName {appName} -projectDir {projectDir}";
             var psDir = $"{projectDir}\\{deployDir}";
             Utils.RunProcess("powershell.exe", psCommand, psDir, false, Process_OutputDataReceived, Process_ErrorDataReceived, Process_DockerBuildComplete);
@@ -105,6 +104,7 @@ namespace KubernetesExtension
 
             return retval;
         }
+
         protected virtual void Process_DockerBuildComplete(object sender, EventArgs e)
         {
         }
@@ -131,11 +131,9 @@ docker push vsimone67/""$($appName):latest""";
 
         protected string GetSettingsForScript()
         {
-            return @"kubectl create secret generic appsettings-secret-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.secrets.json
+            return @"kubectl create secret generic appsettings-secret-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=../appsettings.secrets.json
 
-kubectl create configmap appsettings-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=./appsettings.json";
+kubectl create configmap appsettings-NAMEGOESHERE --namespace NAMESPACEGOESHERE --from-file=../appsettings.json";
         }
-
-
     }
 }
